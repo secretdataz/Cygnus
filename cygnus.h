@@ -153,3 +153,21 @@ void NtResume()
     pfnNtResumeProcess(processHandle);
     CloseHandle(processHandle);
 }
+
+DWORD FindPtrAddress(int PointerLevel, DWORD Offsets[], DWORD BaseAddress)
+{
+    DWORD pointer = BaseAddress;
+    DWORD tmp;
+    DWORD pointerAddr;
+
+    for (int i = 0; i < PointerLevel; i++)
+    {
+        if (i == 0)
+        {
+            ReadProcessMemory(hProcess, (LPCVOID)pointer, &tmp, sizeof(tmp), NULL);
+        }
+        pointerAddr = tmp + Offsets[i];
+        ReadProcessMemory(hProcess, (LPCVOID)pointerAddr, &tmp, sizeof(tmp), NULL);
+    }
+    return pointerAddr;
+}
